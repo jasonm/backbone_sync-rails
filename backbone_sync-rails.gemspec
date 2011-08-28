@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Broadcast changes from Rails models to client-side Backbone.js collections with WebSockets."
   s.description = "Broadcast changes from Rails models to client-side Backbone.js collections with WebSockets."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 3.1.0.rc6"

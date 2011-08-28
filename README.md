@@ -1,77 +1,84 @@
-= BackboneSyncRails
+# BackboneSyncRails
 
 Use this in a Rails 3.1 app.  Right now the only supported pubsub messaging
 system is Faye http://faye.jcoglan.com/.
 
-== Installation
+## Installation
 
 This assumes you already have a Backbone.js + Rails app.
 
-1. Run a Faye server.  It's pretty straightforward, check out `example_faye/run.sh` in this repo.
-2. Tell your app where the faye server is.  This may differ per Rails.env.
-For now, let's say we add `config/initializers/backbone_sync_rails_faye.rb` with:
+1.  Run a Faye server.  It's pretty straightforward, check out `example_faye/run.sh` in this repo.
 
-```ruby
-BackboneSync::Rails::Faye.root_address = 'http://localhost:9292'
-```
+2.  Tell your app where the faye server is.  This may differ per Rails.env.
+    For now, let's say we add `config/initializers/backbone_sync_rails_faye.rb` with:
+
+    ```ruby
+    BackboneSync::Rails::Faye.root_address = 'http://localhost:9292'
+    ```
 
 3.  Pull in the javascripts:
 
-```javascript
-//= require extensions/backbone.collection.idempotent
-//= require backbone_sync-rails/rails_faye_subscriber
+    ```javascript
+    //= require extensions/backbone.collection.idempotent
+    //= require backbone_sync-rails/rails_faye_subscriber
+    ```
 
-```
+    (Until I rewrite it, one of 'em uses coffeescript, so you'll need that.)
 
-(Until I rewrite it, one of 'em uses coffeescript, so you'll need that.)
+4.  Open a connection to Faye from your clients, somewhere on your page (in the layout?):
 
-4. Open a connection to Faye from your clients, somewhere on your page (in the layout?):
+    ```eruby
+    <script type="text/javascript" src="<%= BackboneSync::Rails::Faye.root_address %>/faye.js"></script>
+    ```
 
-```eruby
-<script type="text/javascript" src="<%= BackboneSync::Rails::Faye.root_address %>/faye.js"></script>
-```
+5.  Observe model changes in Rails, and broadcast them.  We provide the guts of
+    an observer for you, so add a file like `app/models/user_observer.rb`:
 
-5. Observe model changes in Rails, and broadcast them.  We provide the guts of
-an observer for you, so add a file like `app/models/user_observer.rb`:
+    ```ruby
+    class UserObserver < ActiveRecord::Observer
+      include BackboneSync::Rails::Faye::Observer
+    end
+    ```
 
-```ruby
-class UserObserver < ActiveRecord::Observer
-  include BackboneSync::Rails::Faye::Observer
-end
-```
+    and enable it in `config/application.rb` like any good observer:
 
-and enable it in `config/application.rb` like any good observer:
+    ```ruby
+    module MyApp
+      class Application < Rails::Application
+        # snip...
 
-```ruby
-module MyApp
-  class Application < Rails::Application
-    # snip...
+        # Activate observers that should always be running.
+        config.active_record.observers = :user_observer
 
-    # Activate observers that should always be running.
-    config.active_record.observers = :user_observer
+        # snip...
+      end
+    end
+    ```
 
-    # snip...
-  end
-end
-```
+6.  Instantiate a new `BackboneSync.RailsFayeSynchronizer` for *each instance*
+    of a Backbone collection you instantiate.  You could do this in the
+    collection's constructor, or do it by hand:
 
-6. Instantiate a new `BackboneSync.RailsFayeSynchronizer` for *each instance*
-of a Backbone collection you instantiate.  You could do this in the
-collection's constructor, or do it by hand:
+    ```javascript
+    // For simplicitly, here it is in a router, or app bootstrap
+    this.users = new MyApp.Collections.UsersCollection()
+    new BackboneSync.RailsFayeSubscriber(this.users, channel: 'users')
+    this.wizards.reset options.users
+    ```
 
-Check it out!  Open two browsers, do some stuff in one, and see your changes
-cascade to the other.  It also assumes that your Backbone views will need to
-observe events on the collection like `change`, `add`, and `remove`.
+7.  Check it out!  Open two browsers, do some stuff in one, and see your changes
+    cascade to the other.  Your Backbone views will need to observe events on
+    the collection like `change`, `add`, and `remove`.
 
-=== Installing on Rails < 3.1
+### Installing on Rails < 3.1
 
 If you're on a version of Rails < 3.1, you'll probably have to copy some files
 into your app by hand, like the `vendor/assets` files.  You'll probably have to
 require the `lib/backbone_sync-rails/faye.rb` file yourself, too.
 
-== Caveats
+## Caveats
 
-In short, we augment the `Backbone.Collection.prototype._add` function so
+In short, I augment the `Backbone.Collection.prototype._add` function so
 that adding multiple models to the same collection with the same `id` attribute
 (or your `idAttribute`-specified attribute of choice) will pass silently.
 
@@ -112,6 +119,6 @@ server-side `id` attribute, and neatly addresses the issue.
 I'm more than happy to hear about better approaches from people with more
 experience in distributed messaging systems.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2011 Jason Morrison. See MIT-LICENSE for details.
