@@ -1,0 +1,15 @@
+.bundle
+db/*.sqlite3
+log/*.log
+tmp/
+db/schema.rb
+public/system
+*.DS_Store
+coverage/*
+*.sw[op]
+rerun.txt
+tags
+!.keep
+vendor/bundler_gems
+chromedriver.log
+public/assets
