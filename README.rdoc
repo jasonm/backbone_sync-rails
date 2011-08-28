@@ -7,7 +7,7 @@ system is Faye http://faye.jcoglan.com/.
 
 This assumes you already have a Backbone.js + Rails app.
 
-1. Run a Faye server.
+1. Run a Faye server.  It's pretty straightforward, check out `example_faye/run.sh` in this repo.
 2. Tell your app where the faye server is.  This may differ per Rails.env.
 For now, let's say we add `config/initializers/backbone_sync_rails_faye.rb` with:
 
