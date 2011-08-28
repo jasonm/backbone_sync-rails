@@ -31,7 +31,7 @@ This assumes you already have a Backbone.js + Rails app.
     <script type="text/javascript" src="<%= BackboneSync::Rails::Faye.root_address %>/faye.js"></script>
     ```
 
-5.  Observe model changes in Rails, and broadcast them.  We provide the guts of
+5.  Observe model changes in Rails, and broadcast them.  The gem provides the guts of
     an observer for you, so add a file like `app/models/user_observer.rb`:
 
     ```ruby
@@ -61,9 +61,9 @@ This assumes you already have a Backbone.js + Rails app.
 
     ```javascript
     // For simplicitly, here it is in a router, or app bootstrap
-    this.users = new MyApp.Collections.UsersCollection()
-    new BackboneSync.RailsFayeSubscriber(this.users, channel: 'users')
-    this.wizards.reset options.users
+    this.users = new MyApp.Collections.UsersCollection();
+    new BackboneSync.RailsFayeSubscriber(this.users, channel: 'users');
+    this.wizards.reset(options.users);
     ```
 
 7.  Check it out!  Open two browsers, do some stuff in one, and see your changes
