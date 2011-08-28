@@ -3,7 +3,7 @@ window.BackboneSync = {}
 class BackboneSync.RailsFayeSubscriber
   constructor: (collection, options) ->
     @collection = collection
-    @client  = new Faye.Client('<%= BackboneSync::Rails::Faye.address %>/faye')
+    @client  = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye')
     @channel = options.channel
 
     @subscribe()
