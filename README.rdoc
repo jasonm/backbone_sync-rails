@@ -69,6 +69,49 @@ If you're on a version of Rails < 3.1, you'll probably have to copy some files
 into your app by hand, like the `vendor/assets` files.  You'll probably have to
 require the `lib/backbone_sync-rails/faye.rb` file yourself, too.
 
+== Caveats
+
+In short, we augment the `Backbone.Collection.prototype._add` function so
+that adding multiple models to the same collection with the same `id` attribute
+(or your `idAttribute`-specified attribute of choice) will pass silently.
+
+In long:
+
+In a distributed messaging system, messages should be idempotent: this means
+that, for any message, an actor should be able to execute that message several
+times with no ill effect.
+
+Why?  Consider the following situation.
+
+1. There are two clients, Alice and Bob.
+2. Alice creates a new model in Backbone.
+3. The server receives her request and persists it.  It also distributes a
+"create" message to all subscribed clients.  4. Alice's new model is added to
+her local collection in the normal due course of
+`Backbone.Model.prototype.save`.
+5. Bob receives the create message and creates a model in his local collection.
+6. All is well until this point.  Now, Alice receives the create message (she
+is subscribed just as Bob is) and creates a duplicate model into her
+collection.
+
+There is actually a race condition in that Alice's HTTP request to create (and
+therefore her normal `save()`-based addition to the collection)_ may complete
+before or after the pubsub notification informs her collection to add a new
+member.
+
+One approach to solving this would be for each update message to be tagged with
+its originating client, and for each client to filter out those messages.  This
+would prove difficult, particularly since, in this implementation, the
+`ActiveModel::Observer` subclass is decoupled from the originating client.
+
+The change made in
+`vendor/assets/javascripts/extensions/backbone.collection.idempotent.js` is to
+make `Backbone.Collection.prototype.add` idempotent with respect to the
+server-side `id` attribute, and neatly addresses the issue.
+
+I'm more than happy to hear about better approaches from people with more
+experience in distributed messaging systems.
+
 == Copyright
 
 Copyright (c) 2011 Jason Morrison. See MIT-LICENSE for details.
