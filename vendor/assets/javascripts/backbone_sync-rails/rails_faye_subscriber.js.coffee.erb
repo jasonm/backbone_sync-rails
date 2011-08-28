@@ -1,0 +1,31 @@
+window.BackboneSync = {}
+
+class BackboneSync.RailsFayeSubscriber
+  constructor: (collection, options) ->
+    @collection = collection
+    @client  = new Faye.Client('<%= BackboneSync::Rails::Faye.address %>/faye')
+    @channel = options.channel
+
+    @subscribe()
+
+  subscribe: =>
+    @client.subscribe "/sync/#{@channel}", @receive
+
+  receive: (message) =>
+    $.each message, (event, eventArguments) =>
+      @[event](eventArguments)
+
+  update: (params) =>
+    $.each params, (id, attributes) =>
+      model = @collection.get(id)
+      model.set(attributes)
+
+  create: (params) =>
+    $.each params, (id, attributes) =>
+      model = new @collection.model(attributes)
+      @collection.add(model)
+
+  destroy: (params) =>
+    $.each params, (id, attributes) =>
+      model = @collection.get(id)
+      @collection.remove(model)
