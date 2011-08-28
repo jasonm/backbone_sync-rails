@@ -13,3 +13,4 @@ tags
 vendor/bundler_gems
 chromedriver.log
 public/assets
+*.gem
