@@ -76,6 +76,13 @@ If you're on a version of Rails < 3.1, you'll probably have to copy some files
 into your app by hand, like the `vendor/assets` files.  You'll probably have to
 require the `lib/backbone_sync-rails/faye.rb` file yourself, too.
 
+## Example app
+
+I wrote an untested example application that uses CoffeeScript and the
+backbone-rails generators:
+
+https://github.com/jasonm/wizards
+
 ## Caveats
 
 In short, I augment the `Backbone.Collection.prototype._add` function so
