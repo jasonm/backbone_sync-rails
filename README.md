@@ -7,6 +7,12 @@ system is Faye http://faye.jcoglan.com/.
 
 This assumes you already have a Backbone.js + Rails app.
 
+0.  Install the gem, say in your `Gemfile`:
+
+    ```ruby
+    gem 'backbone_sync-rails', '~> 0.0.1'
+    ```
+
 1.  Run a Faye server.  It's pretty straightforward, check out `example_faye/run.sh` in this repo.
 
 2.  Tell your app where the faye server is.  This may differ per Rails.env.
