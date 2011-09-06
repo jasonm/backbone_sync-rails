@@ -1,0 +1,80 @@
+// Original CoffeeScript:
+//
+// window.BackboneSync = {}
+// 
+// class BackboneSync.RailsFayeSubscriber
+//   constructor: (collection, options) ->
+//     @collection = collection
+//     @client  = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye')
+//     @channel = options.channel
+// 
+//     @subscribe()
+// 
+//   subscribe: =>
+//     @client.subscribe "/sync/#{@channel}", @receive
+// 
+//   receive: (message) =>
+//     $.each message, (event, eventArguments) =>
+//       @[event](eventArguments)
+// 
+//   update: (params) =>
+//     $.each params, (id, attributes) =>
+//       model = @collection.get(id)
+//       model.set(attributes)
+// 
+//   create: (params) =>
+//     $.each params, (id, attributes) =>
+//       model = new @collection.model(attributes)
+//       @collection.add(model)
+// 
+//   destroy: (params) =>
+//     $.each params, (id, attributes) =>
+//       model = @collection.get(id)
+//       @collection.remove(model)
+
+(function() {
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  window.BackboneSync = {};
+  BackboneSync.RailsFayeSubscriber = (function() {
+    function RailsFayeSubscriber(collection, options) {
+      this.destroy = __bind(this.destroy, this);
+      this.create = __bind(this.create, this);
+      this.update = __bind(this.update, this);
+      this.receive = __bind(this.receive, this);
+      this.subscribe = __bind(this.subscribe, this);      this.collection = collection;
+      this.client = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye');
+      this.channel = options.channel;
+      this.subscribe();
+    }
+    RailsFayeSubscriber.prototype.subscribe = function() {
+      return this.client.subscribe("/sync/" + this.channel, this.receive);
+    };
+    RailsFayeSubscriber.prototype.receive = function(message) {
+      return $.each(message, __bind(function(event, eventArguments) {
+        return this[event](eventArguments);
+      }, this));
+    };
+    RailsFayeSubscriber.prototype.update = function(params) {
+      return $.each(params, __bind(function(id, attributes) {
+        var model;
+        model = this.collection.get(id);
+        return model.set(attributes);
+      }, this));
+    };
+    RailsFayeSubscriber.prototype.create = function(params) {
+      return $.each(params, __bind(function(id, attributes) {
+        var model;
+        model = new this.collection.model(attributes);
+        return this.collection.add(model);
+      }, this));
+    };
+    RailsFayeSubscriber.prototype.destroy = function(params) {
+      return $.each(params, __bind(function(id, attributes) {
+        var model;
+        model = this.collection.get(id);
+        return this.collection.remove(model);
+      }, this));
+    };
+    return RailsFayeSubscriber;
+  })();
+}).call(this);
