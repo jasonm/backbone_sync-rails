@@ -29,8 +29,6 @@ This assumes you already have a Backbone.js + Rails app.
     //= require backbone_sync-rails/rails_faye_subscriber
     ```
 
-    (Until I rewrite it, one of 'em uses coffeescript, so you'll need that.)
-
 4.  Open a connection to Faye from your clients, somewhere on your page (in the layout?):
 
     ```eruby
