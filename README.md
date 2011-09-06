@@ -66,7 +66,7 @@ This assumes you already have a Backbone.js + Rails app.
     ```javascript
     // For simplicitly, here it is in a router, or app bootstrap
     this.users = new MyApp.Collections.UsersCollection();
-    new BackboneSync.RailsFayeSubscriber(this.users, channel: 'users');
+    new BackboneSync.RailsFayeSubscriber(this.users, { channel: 'users' });
     this.wizards.reset(options.users);
     ```
 
