@@ -1,4 +1,4 @@
-require 'backbone_sync-rails/faye/message'
+require 'net/http'
 
 module BackboneSync
   module Rails
@@ -10,10 +10,18 @@ module BackboneSync
         end
 
         def broadcast
-          Message.new(channel, data).send
+          Net::HTTP.post_form(uri, :message => message)
         end
 
         private
+
+        def uri
+          URI.parse("#{BackboneSync::Rails::Faye.root_address}/faye")
+        end
+
+        def message
+          { :channel => channel, :data => data }.to_json
+        end
 
         def channel
           "/sync/#{@model.class.table_name}"
