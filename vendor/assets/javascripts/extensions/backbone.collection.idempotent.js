@@ -2,7 +2,7 @@ Backbone.Collection.prototype._addWithIdCheck = function(model, options) {
   var idAttribute = model.idAttribute || this.model.prototype.idAttribute;
   var modelId = model[idAttribute];
 
-  if (this.get(modelId) === undefined) {
+  if (modelId === undefined || this.get(modelId) === undefined) {
     this._addWithoutIdCheck(model, options);
   }
 };
