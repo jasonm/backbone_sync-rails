@@ -59,18 +59,22 @@ This assumes you already have a Backbone.js + Rails app.
     end
     ```
 
-6.  Instantiate a new `BackboneSync.RailsFayeSynchronizer` for *each instance*
+7.  Instantiate a new `BackboneSync.RailsFayeSynchronizer` for *each instance*
     of a Backbone collection you instantiate.  You could do this in the
     collection's constructor, or do it by hand:
 
     ```javascript
     // For simplicitly, here it is in a router, or app bootstrap
     this.users = new MyApp.Collections.UsersCollection();
-    new BackboneSync.RailsFayeSubscriber(this.users, { channel: 'users' });
+    var fayeClient = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye');
+    new BackboneSync.RailsFayeSubscriber(this.users, {
+      channel: 'users', // Set to Rails model.class.table_name, or override Model#faye_channel
+      client: fayeClient
+    });
     this.wizards.reset(options.users);
     ```
 
-7.  Check it out!  Open two browsers, do some stuff in one, and see your changes
+8.  Check it out!  Open two browsers, do some stuff in one, and see your changes
     cascade to the other.  Your Backbone views will need to observe events on
     the collection like `change`, `add`, and `remove`.
 

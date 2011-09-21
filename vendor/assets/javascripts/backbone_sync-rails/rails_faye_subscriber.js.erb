@@ -3,7 +3,7 @@ this.BackboneSync = this.BackboneSync || {};
 BackboneSync.RailsFayeSubscriber = (function() {
   function RailsFayeSubscriber(collection, options) {
     this.collection = collection;
-    this.client = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye');
+    this.client = options.client;
     this.channel = options.channel;
     this.subscribe();
   }
