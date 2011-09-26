@@ -68,7 +68,7 @@ This assumes you already have a Backbone.js + Rails app.
     this.users = new MyApp.Collections.UsersCollection();
     var fayeClient = new Faye.Client('<%= BackboneSync::Rails::Faye.root_address %>/faye');
     new BackboneSync.RailsFayeSubscriber(this.users, {
-      channel: 'users', // Set to Rails model.class.table_name, or override Model#faye_channel
+      channel: 'users', // Set to Rails model.class.table_name, or override Model.faye_channel
       client: fayeClient
     });
     this.wizards.reset(options.users);
