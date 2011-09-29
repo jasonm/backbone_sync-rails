@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    backbone_sync-rails (0.0.7)
+    backbone_sync-rails (0.0.8)
       rails (>= 3.0.0)
 
 GEM
