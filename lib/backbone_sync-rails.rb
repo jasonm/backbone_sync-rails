@@ -1,4 +1,5 @@
 require 'backbone_sync-rails/faye'
+require 'backbone_sync-rails/pusher'
 
 module BackboneSync
   module Rails

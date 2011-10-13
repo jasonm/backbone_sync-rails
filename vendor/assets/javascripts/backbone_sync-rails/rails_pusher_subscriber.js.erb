@@ -1,0 +1,49 @@
+this.BackboneSync = this.BackboneSync || {};
+
+BackboneSync.RailsPusherSubscriber = (function() {
+  function RailsPusherSubscriber(collection, options) {
+    this.collection = collection;
+    this.client = options.client;
+    this.channel = options.channel;
+    this.subscribe();
+  }
+
+  RailsPusherSubscriber.prototype.subscribe = function() {
+    var subchannel = "sync-" + this.channel;
+    this.client.subscribe(subchannel);
+
+    this.client.bind('update', function(){
+      this.update(data);
+    });
+
+    this.client.bind('update', function(){ this.update(data); });
+    this.client.bind('create', function(){ this.create(data); });
+    this.client.bind('destroy', function(){ this.destroy(data); });
+  };
+
+  RailsPusherSubscriber.prototype.update = function(params) {
+    var self = this;
+    return $.each(params, function(id, attributes) {
+      var model = self.collection.get(id);
+      return model.set(attributes);
+    });
+  };
+
+  RailsPusherSubscriber.prototype.create = function(params) {
+    var self = this;
+    return $.each(params, function(id, attributes) {
+      var model = new self.collection.model(attributes);
+      return self.collection.add(model);
+    });
+  };
+
+  RailsPusherSubscriber.prototype.destroy = function(params) {
+    var self = this;
+    return $.each(params, function(id, attributes) {
+      var model = self.collection.get(id);
+      return self.collection.remove(model);
+    });
+  };
+
+  return RailsPusherSubscriber;
+})();
