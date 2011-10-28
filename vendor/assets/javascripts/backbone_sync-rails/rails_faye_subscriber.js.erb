@@ -5,11 +5,13 @@ BackboneSync.RailsFayeSubscriber = (function() {
     this.collection = collection;
     this.client = options.client;
     this.channel = options.channel;
+    this.subscription = null;
     this.subscribe();
   }
 
   RailsFayeSubscriber.prototype.subscribe = function() {
-    return this.client.subscribe("/sync/" + this.channel, _.bind(this.receive, this));
+    this.subscription = this.client.subscribe("/sync/" + this.channel, _.bind(this.receive, this));
+    return this.subscription;
   };
 
   RailsFayeSubscriber.prototype.receive = function(message) {
@@ -41,6 +43,11 @@ BackboneSync.RailsFayeSubscriber = (function() {
       var model = self.collection.get(id);
       return self.collection.remove(model);
     });
+  };
+
+  RailsFayeSubscriber.prototype.leave = function() {
+    this.subscription.leave();
+    return true;
   };
 
   return RailsFayeSubscriber;
