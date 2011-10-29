@@ -10,10 +10,26 @@ module BackboneSync
         end
 
         def broadcast
-          Net::HTTP.post_form(uri, :message => message)
+          post_form(uri, :message => message)
         end
 
         private
+
+        def post_form(url, params)
+          req = Net::HTTP::Post.new(url.path)
+          req.form_data = params
+          req.basic_auth url.user, url.password if url.user
+
+          http = Net::HTTP.new(url.host, url.port)
+          if url.scheme == "https"
+            http.use_ssl = true
+            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          end
+
+          http.start do |https|
+            https.request(req)
+          end
+        end
 
         def uri
           URI.parse("#{BackboneSync::Rails::Faye.root_address}/faye")
