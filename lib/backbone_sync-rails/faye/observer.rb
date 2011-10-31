@@ -5,25 +5,25 @@ module BackboneSync
     module Faye
       module Observer
         def after_update(model)
-          Event.new(model, :update, subchannel).broadcast
+          Event.new(model, :update, subchannel(model)).broadcast
         rescue *NET_HTTP_EXCEPTIONS => e
           handle_net_http_exception(e)
         end
 
         def after_create(model)
-          Event.new(model, :create, subchannel).broadcast
+          Event.new(model, :create, subchannel(model)).broadcast
         rescue *NET_HTTP_EXCEPTIONS => e
           handle_net_http_exception(e)
         end
 
         def after_destroy(model)
-          Event.new(model, :destroy, subchannel).broadcast
+          Event.new(model, :destroy, subchannel(model)).broadcast
         rescue *NET_HTTP_EXCEPTIONS => e
           handle_net_http_exception(e)
         end
 
         def after_touch(model)
-          Event.new(model, :update, subchannel).broadcast
+          Event.new(model, :update, subchannel(model)).broadcast
         rescue *NET_HTTP_EXCEPTIONS => e
           handle_net_http_exception(e)
         end
@@ -37,7 +37,7 @@ module BackboneSync
           ::Rails.logger.error("")
         end
 
-        def subchannel
+        def subchannel(model)
           nil
         end
       end
