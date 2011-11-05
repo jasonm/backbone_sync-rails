@@ -1,8 +1,8 @@
 .bundle
-db/*.sqlite3
-log/*.log
+spec/dummy/db/*.sqlite3
+spec/dummy/log/*.log
 tmp/
-db/schema.rb
+spec/dummy/db/schema.rb
 public/system
 *.DS_Store
 coverage/*
