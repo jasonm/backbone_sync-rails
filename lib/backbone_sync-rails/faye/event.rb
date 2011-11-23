@@ -24,7 +24,7 @@ module BackboneSync
         end
 
         def channel
-          subchannel = @model.class.try(:faye_channel) || @model.class.table_name
+          subchannel = @model.class.respond_to?(:faye_channel) ? @model.class.try(:faye_channel) : @model.class.table_name
           "/sync/#{subchannel}"
         end
 
