@@ -10,14 +10,14 @@ module BackboneSync
         end
 
         def broadcast
-          Net::HTTP.post_form(uri, :message => message)
+          Net::HTTP.post_form(Event.uri, :message => message)
+        end
+
+        def self.uri
+          URI.parse("#{BackboneSync::Rails::Faye.root_address}/faye")
         end
 
         private
-
-        def uri
-          URI.parse("#{BackboneSync::Rails::Faye.root_address}/faye")
-        end
 
         def message
           { :channel => channel, :data => data }.to_json
