@@ -1,3 +1,4 @@
+require "backbone_sync-rails/engine"
 require 'backbone_sync-rails/faye'
 
 module BackboneSync
@@ -6,8 +7,5 @@ module BackboneSync
                            Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError,
                            Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
                            Net::ProtocolError]
-
-    class Engine < ::Rails::Engine
-    end
   end
 end
