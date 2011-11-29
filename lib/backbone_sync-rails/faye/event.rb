@@ -49,7 +49,9 @@ module BackboneSync
         end
 
         def subchannel
-          @subchannel || @model.class.try(:faye_channel) || @model.class.table_name
+          @subchannel || @model.faye_channel
+        rescue NoMethodError => e
+          @model.class.table_name
         end
       end
     end
