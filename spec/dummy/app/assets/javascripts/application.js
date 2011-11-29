@@ -7,3 +7,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
+//= require underscore
+//= require backbone
+//= require extensions/backbone.collection.idempotent
+//= require backbone_sync-rails/rails_faye_subscriber
