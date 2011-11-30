@@ -31,10 +31,27 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
     };
 
     auth_client = {
-      subscribe: sinon.spy(),
+      subscribe: sinon.stub().returns({
+        channel:      "/meta/subscribe",
+        successful:   true,
+        clientId:     "fakeid",
+        subscription: "/sync/comments",
+        ext: { authToken: '1234abcd' }
+      }),
       addExtension: sinon.spy()
     };
 
+    failed_auth_client = {
+      subscribe: sinon.stub().returns({
+        channel:      "/meta/subscribe",
+        successful:   false,
+        clientId:     "fakeid",
+        subscription: "/sync/authors",
+        ext: { authToken: '1234abcd' },
+        error: "Invalid subscription auth token"
+      }),
+      addExtension: sinon.spy()
+    };
 
     subscriber = new BackboneSync.RailsFayeSubscriber(collection, {
       client: client,
@@ -47,6 +64,13 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
       use_authorization: true,
       auth_token:        "1234abcd"
     });
+
+    failed_auth_subscriber = new BackboneSync.RailsFayeSubscriber(collection, {
+      client:            failed_auth_client,
+      channel:           "authors",
+      use_authorization: true,
+      auth_token:        "1234abcd"
+    });
   });
 
   it("subscribes to a client on a channel", function() {
@@ -54,17 +78,46 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
     expect(typeof client.subscribe.getCall(0).args[1]).toEqual('function');
   });
 
-  it("subscribes to an authorized client on a channel", function() {
-    expect(auth_client.subscribe).toHaveBeenCalledWith("/sync/comments");
-    expect(typeof auth_client.subscribe.getCall(0).args[1]).toEqual('function');
+  describe("Successful Authorization", function() {
+    it("subscribes to an authorized client on a channel", function() {
+      expect(auth_client.subscribe).toHaveBeenCalledWith("/sync/comments");
+      expect(typeof auth_client.subscribe.getCall(0).args[1]).toEqual('function');
+    });
+
+    it("adds outgoing authentication when specified", function() {
+      expect(auth_client.addExtension).toHaveBeenCalled();
+    });
+
+    it("adds outgoing authentication before subscription", function() {
+      expect(auth_client.addExtension).toHaveBeenCalledBefore(auth_client.subscribe);
+    });
+
+    it("returns the authentication token sent on subscription", function() {
+      expect(auth_client.subscribe.returnValues[0].ext.authToken).toEqual('1234abcd');
+    });
   });
 
-  it("adds outgoing authentication when specified", function() {
-    expect(auth_client.addExtension).toHaveBeenCalled();
-  });
+  describe("Failed Authorization", function() {
+    it("subscribes to an authorized client on a channel", function() {
+      expect(failed_auth_client.subscribe).toHaveBeenCalledWith("/sync/authors");
+      expect(typeof failed_auth_client.subscribe.getCall(0).args[1]).toEqual('function');
+    });
 
-  it("adds outgoing authentication before subscription", function() {
-    expect(auth_client.addExtension).toHaveBeenCalledBefore(auth_client.subscribe);
+    it("adds outgoing authentication when specified", function() {
+      expect(failed_auth_client.addExtension).toHaveBeenCalled();
+    });
+
+    it("adds outgoing authentication before subscription", function() {
+      expect(failed_auth_client.addExtension).toHaveBeenCalledBefore(failed_auth_client.subscribe);
+    });
+
+    it("returns the authentication token sent on subscription", function() {
+      expect(failed_auth_client.subscribe.returnValues[0].ext.authToken).toEqual('1234abcd');
+    });
+
+    it("returns an error message on unsuccesful authorization.", function() {
+      expect(failed_auth_client.subscribe.returnValues[0].error).toEqual('Invalid subscription auth token');
+    });
   });
 
   it("updates a model in a collection when an 'update' message is received", function() {
