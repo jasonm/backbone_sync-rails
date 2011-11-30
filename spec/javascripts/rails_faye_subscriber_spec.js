@@ -1,5 +1,5 @@
 describe("BackboneSync.RailsFayeSubscriber", function() {
-  var client, collection, model, subscriber, Model;
+  var client, collection, model, subscriber, auth_subscriber, Model;
 
   beforeEach(function() {
     model = {
@@ -30,16 +30,41 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
       subscribe: sinon.spy()
     };
 
+    auth_client = {
+      subscribe: sinon.spy(),
+      addExtension: sinon.spy()
+    };
+
+
     subscriber = new BackboneSync.RailsFayeSubscriber(collection, {
       client: client,
       channel: "tasks"
     });
+
+    auth_subscriber = new BackboneSync.RailsFayeSubscriber(collection, {
+      client:            auth_client,
+      channel:           "comments",
+      use_authorization: true,
+      auth_token:        "1234abcd"
+    });
   });
 
   it("subscribes to a client on a channel", function() {
-    expect(client.subscribe).toHaveBeenCalled();
-    expect(client.subscribe.getCall(0).args[0]).toEqual("/sync/tasks");
+    expect(client.subscribe).toHaveBeenCalledWith("/sync/tasks");
     expect(typeof client.subscribe.getCall(0).args[1]).toEqual('function');
+  });
+
+  it("subscribes to an authorized client on a channel", function() {
+    expect(auth_client.subscribe).toHaveBeenCalledWith("/sync/comments");
+    expect(typeof auth_client.subscribe.getCall(0).args[1]).toEqual('function');
+  });
+
+  it("adds outgoing authentication when specified", function() {
+    expect(auth_client.addExtension).toHaveBeenCalled();
+  });
+
+  it("adds outgoing authentication before subscription", function() {
+    expect(auth_client.addExtension).toHaveBeenCalledBefore(auth_client.subscribe);
   });
 
   it("updates a model in a collection when an 'update' message is received", function() {
