@@ -27,7 +27,7 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
     sinon.spy(collection, 'remove');
 
     client = {
-      subscribe: sinon.spy()
+      subscribe: sinon.spy(),
     };
 
     auth_client = {
@@ -36,7 +36,8 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
         successful:   true,
         clientId:     "fakeid",
         subscription: "/sync/comments",
-        ext: { authToken: '1234abcd' }
+        ext: { authToken: '1234abcd' },
+        cancel: sinon.spy()
       }),
       addExtension: sinon.spy()
     };
@@ -176,5 +177,9 @@ describe("BackboneSync.RailsFayeSubscriber", function() {
 
     expect(collection.add).toHaveBeenCalled();
     expect(collection.remove).toHaveBeenCalled();
+  });
+
+  it("leaves the subscription when asked politely", function() {
+    expect(auth_subscriber.leave()).toBeTruthy();
   });
 });

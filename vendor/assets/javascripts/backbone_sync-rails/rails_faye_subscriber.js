@@ -13,7 +13,7 @@ BackboneSync.RailsFayeSubscriber = (function() {
       this.client.addExtension(outgoingAuth);
     }
 
-    this.subscribe();
+    this.subscription = this.subscribe();
   }
 
   RailsFayeSubscriber.prototype.subscribe = function() {
@@ -49,6 +49,11 @@ BackboneSync.RailsFayeSubscriber = (function() {
       var model = self.collection.get(id);
       return self.collection.remove(model);
     });
+  };
+
+  RailsFayeSubscriber.prototype.leave = function() {
+    this.subscription.cancel();
+    return true;
   };
 
   return RailsFayeSubscriber;
