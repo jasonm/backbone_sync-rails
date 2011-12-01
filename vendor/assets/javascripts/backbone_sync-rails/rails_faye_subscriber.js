@@ -5,7 +5,15 @@ BackboneSync.RailsFayeSubscriber = (function() {
     this.collection = collection;
     this.client = options.client;
     this.channel = options.channel;
-    this.subscribe();
+    this.useAuthorization = options.use_authorization;
+    this.authToken = options.auth_token;
+
+    if (this.useAuthorization === true) {
+      outgoingAuth = new BackboneSync.FayeAuthorization({ auth_token: options.auth_token });
+      this.client.addExtension(outgoingAuth);
+    }
+
+    this.subscription = this.subscribe();
   }
 
   RailsFayeSubscriber.prototype.subscribe = function() {
@@ -41,6 +49,11 @@ BackboneSync.RailsFayeSubscriber = (function() {
       var model = self.collection.get(id);
       return self.collection.remove(model);
     });
+  };
+
+  RailsFayeSubscriber.prototype.leave = function() {
+    this.subscription.cancel();
+    return true;
   };
 
   return RailsFayeSubscriber;
