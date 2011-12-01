@@ -6,7 +6,7 @@ BackboneSync.FayeAuthorization = (function() {
   }
 
   FayeAuthorization.prototype.outgoing = function(message, callback) {
-    if(!message['channel'] === '/meta/subscribe') {
+    if(message['channel'] !== '/meta/subscribe') {
       return callback(message);
     }
 
