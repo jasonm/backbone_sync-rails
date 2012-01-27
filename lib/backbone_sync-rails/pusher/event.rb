@@ -19,7 +19,7 @@ module BackboneSync
         end
 
         def data
-          { @event => { @model.id => @model.as_json } }
+          { @model.id => @model.as_json }
         end
       end
     end

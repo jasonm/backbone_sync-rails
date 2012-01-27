@@ -9,16 +9,13 @@ BackboneSync.RailsPusherSubscriber = (function() {
   }
 
   RailsPusherSubscriber.prototype.subscribe = function() {
+    var self = this;
     var subchannel = "sync-" + this.channel;
-    this.client.subscribe(subchannel);
+    this.pusherChannel = this.client.subscribe(subchannel);
 
-    this.client.bind('update', function(){
-      this.update(data);
-    });
-
-    this.client.bind('update', function(){ this.update(data); });
-    this.client.bind('create', function(){ this.create(data); });
-    this.client.bind('destroy', function(){ this.destroy(data); });
+    this.pusherChannel.bind('update', function (data) { self.update(data); });
+    this.pusherChannel.bind('create', function (data) { self.create(data); });
+    this.pusherChannel.bind('destroy', function (data) { self.destroy(data); });
   };
 
   RailsPusherSubscriber.prototype.update = function(params) {
