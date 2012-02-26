@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", ">= 3.0.0"
 
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "rspec-rails", "~> 2.7.0"
-  s.add_development_dependency "factory_girl_rails", "~> 1.3.0"
-  s.add_development_dependency "sham_rack", "~> 1.3.3"
-  s.add_development_dependency "jasmine", "~> 1.1.2"
+  s.add_development_dependency "rspec-rails"
+  s.add_development_dependency "factory_girl_rails"
+  s.add_development_dependency "sham_rack"
+  s.add_development_dependency "jasmine"
 end
