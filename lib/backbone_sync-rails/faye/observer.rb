@@ -5,27 +5,27 @@ module BackboneSync
     module Faye
       module Observer
         def after_update(model)
-          begin
-            Event.new(model, :update).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :update).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_create(model)
-          begin
-            Event.new(model, :create).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :create).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_destroy(model)
-          begin
-            Event.new(model, :destroy).broadcast
-          rescue *NET_HTTP_EXCEPTIONS => e
-            handle_net_http_exception(e)
-          end
+          Event.new(model, :destroy).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
+        end
+
+        def after_touch(model)
+          Event.new(model, :update).broadcast
+        rescue *NET_HTTP_EXCEPTIONS => e
+          handle_net_http_exception(e)
         end
 
         def after_touch(model)
