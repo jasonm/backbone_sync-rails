@@ -14,9 +14,13 @@ Gem::Specification.new do |s|
   s.description = "Broadcast changes from Rails models to client-side Backbone.js collections with WebSockets."
 
   s.files = Dir["{app,config,db,lib,vendor}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
-  s.test_files = Dir["test/**/*"]
+  s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", ">= 3.0.0"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "rspec-rails", "~> 2.7.0"
+  s.add_development_dependency "factory_girl_rails", "~> 1.3.0"
+  s.add_development_dependency "sham_rack", "~> 1.3.3"
+  s.add_development_dependency "jasmine", "~> 1.1.2"
 end
